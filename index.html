@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>神的瘋狂時節 v0.1.0 百科圖鑑 — 首頁</title>
+  <link rel="stylesheet" href="css/wiki.css">
+</head>
+<body data-page="home">
+  <div class="wiki-shell">
+    <header class="topbar" id="topbar"></header>
+    <div class="draft-strip" id="draftStrip"></div>
+
+    <div class="workspace">
+      <aside class="side-tree mc-panel" id="sideTree"></aside>
+
+      <main class="stage">
+        <section class="mc-panel-gold" style="padding:18px;">
+          <div class="section-heading">0.1.0 模組實裝統計</div>
+          <div class="stats-grid" id="homeStats"></div>
+        </section>
+
+        <section class="mc-panel" style="padding:18px;">
+          <div class="section-heading">實機 8 幀序列粒子特效展示台（Live VFX）</div>
+          <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:12px;">直接讀取模組 <code>textures/particle/*_0..7.png</code> 序列幀貼圖即時循環播放：</p>
+          <div class="vfx-showcase-grid" id="vfxShowcase"></div>
+        </section>
+
+        <section class="mc-panel" style="padding:18px;">
+          <div class="section-heading">核心模組設計精華與系統架構</div>
+          <div style="display:grid;gap:10px;font-size:0.92rem;color:var(--text-muted);">
+            <div>• <strong style="color:var(--gold-bright);">獨立建模與武器「活體感」（<code>life.json</code> / <code>fidget</code> / <code>inspect</code>）</strong>：神兵與裝備皆擁有獨立 3D 建模與專屬第一人稱動作分鏡；武器在閒置時會自主呼吸、凝視、敲擊刀鞘甚至「拒絕歸鞘」，裝備也會隨水位、受擊與檢視鍵做出即時肢體回饋。</div>
+            <div>• <strong style="color:var(--gold-bright);">太刀深度連段與流派演化（<code>ComboSchool</code> / <code>Combo HUD</code>）</strong>：以太刀「黃泉津大神・穢血刀」為核心示範，結合雙持刀鞘（<code>socket2</code>）、拋鞘、延遲斬、解放一閃、格擋反擊，並依每日戰鬥習慣於「骨／蛆／蛇／鞘」四大流派間演化。</div>
+            <div>• <strong style="color:var(--gold-bright);">餓鬼道・真刀（<code>blade</code>）</strong>：獨立第一人稱狀態機、五段連招與 6 種情態變式、7 種可切換技能、活體投擲實體（<code>living_blade</code>）與處決吞形。</div>
+            <div>• <strong style="color:var(--gold-bright);">資料驅動神兵與神話裝備（<code>weapon</code> / <code>equipment</code>）</strong>：透過 <code>moveset.json</code> 驅動 14 把跨文明武器與 11 件神話裝備，整合連段取消、頓幀（hitstop）與 <code>meshvfx</code> 網格特效。</div>
+            <div>• <strong style="color:var(--gold-bright);">古神 Boss（WIP）、餓鬼生態與世界天象</strong>：規劃伊邪那美、提亞瑪特兩位古神 Boss（設計製作中），搭配 5 種餓鬼怪物、4 種花粉症原版特殊怪與 2 種大型天穹天象。</div>
+          </div>
+        </section>
+
+        <section class="mc-panel" style="padding:18px;">
+          <div class="section-heading">操作按鍵一覽</div>
+          <div class="table-wrap mc-recess">
+            <table>
+              <thead><tr><th>按鍵 / 組合</th><th>動作說明</th><th>備註</th></tr></thead>
+              <tbody id="keysTable"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="mc-panel" style="padding:18px;">
+          <div class="section-heading">管理員測試指令</div>
+          <div class="table-wrap mc-recess">
+            <table>
+              <thead><tr><th>指令</th><th>權限</th><th>效果說明</th></tr></thead>
+              <tbody id="commandsTable"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="footer mc-panel" id="pageFooter"></footer>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/wiki.js"></script>
+</body>
+</html>

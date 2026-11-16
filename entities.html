@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boss・餓鬼・天象 — 神的瘋狂時節 v0.1.0 Wiki</title>
+  <link rel="stylesheet" href="css/wiki.css">
+</head>
+<body data-page="entities">
+  <div class="wiki-shell">
+    <header class="topbar" id="topbar"></header>
+    <div class="draft-strip" id="draftStrip"></div>
+
+    <div class="workspace">
+      <aside class="side-tree mc-panel" id="sideTree"></aside>
+
+      <main class="stage">
+        <section id="boss">
+          <div class="section-heading">古神 Boss</div>
+          <div class="card-grid" id="bossGrid"></div>
+        </section>
+
+        <section id="gaki">
+          <div class="section-heading">餓鬼怪物與衍生實體</div>
+          <div class="card-grid" id="entityGrid"></div>
+        </section>
+
+        <section id="pollen">
+          <div class="section-heading">花粉症原版特殊怪（WIP 外觀預覽）</div>
+          <div class="card-grid" id="pollenGrid"></div>
+        </section>
+
+        <section id="phenomenon">
+          <div class="section-heading">世界天象 (Phenomenon)</div>
+          <div class="card-grid" id="phenomGrid"></div>
+        </section>
+
+        <section class="mc-panel" style="padding:18px;">
+          <div class="section-heading">模組進度 (Advancements)</div>
+          <div class="table-wrap mc-recess">
+            <table>
+              <thead><tr><th>進度 ID</th><th>標題</th><th>達成條件說明</th></tr></thead>
+              <tbody id="advTable"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="footer mc-panel" id="pageFooter"></footer>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/wiki.js"></script>
+</body>
+</html>

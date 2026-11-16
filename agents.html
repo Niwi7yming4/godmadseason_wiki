@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AGENTS.md 開發規範 — 神的瘋狂時節 Wiki</title>
+  <link rel="stylesheet" href="css/wiki.css">
+</head>
+<body data-page="agents">
+  <div class="wiki-shell">
+    <header class="topbar" id="topbar"></header>
+    <div class="draft-strip" id="draftStrip"></div>
+
+    <div class="workspace">
+      <aside class="side-tree mc-panel" id="sideTree"></aside>
+
+      <main class="stage">
+        <section class="mc-panel-gold" style="padding:20px;">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;">
+            <div class="section-heading" style="margin-bottom:0;">AGENTS.md — 《神的瘋狂時節》AI 協作與圖鑑憲章</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              <a class="mc-btn" href="AGENTS.md" target="_blank" rel="noopener">📄 前往真實 AGENTS.md 檔案</a>
+              <a class="mc-btn" href="#roadmap">📖 留在圖鑑閱讀規範</a>
+            </div>
+          </div>
+          <p style="font-size:0.94rem;color:var(--text-main);">
+            本頁為根目錄 <code>AGENTS.md</code> 的圖鑑視覺化版本。你可以選擇留在這個圖鑑頁面瀏覽規範與 0.1.0 開發藍圖，或點擊上方按鈕直接檢視純文字 Markdown 原始檔。
+          </p>
+        </section>
+
+        <section class="mc-panel" id="roadmap" style="padding:18px;">
+          <div class="section-heading">1. 目前處理項目、0.1.0 預估規模與後續計畫</div>
+          <div style="display:grid;gap:12px;font-size:0.9rem;color:var(--text-muted);">
+            <div class="mc-recess" style="padding:12px 14px;">
+              <strong style="color:var(--gold-bright);">🔧 現階段正在處理（Snapshot 細修中）</strong>
+              <ul style="padding-left:20px;margin-top:6px;">
+                <li><strong>獨立建模與第一人稱「活體武器」設計</strong>：每把神兵與裝備皆有專屬 3D 建模與第一人稱分鏡（<code>fp_*</code>），透過 <code>life.json</code> 與 <code>fidget</code> 讓武器在閒置時呼吸、凝視、敲擊刀鞘甚至拒絕歸鞘，呈現獨特的「活感」。</li>
+                <li><strong>太刀流派演化與深度動作（<code>ComboSchool</code> / <code>Combo HUD</code>）</strong>：以太刀（黃泉津大神・穢血刀）為代表，整合刀鞘雙持（<code>socket2</code>）、拋鞘、延遲斬、解放一閃、格擋反擊，並依每日戰鬥習慣於「骨／蛆／蛇／鞘」四流派間演化。</li>
+                <li><strong>Boss 與細修項目</strong>：黃泉津大神・伊邪那美與原初之海・提亞瑪特模型設計（WIP）、<code>adonis</code>／<code>fangxiang</code> 數值與招式補齊，以及 4 種花粉症原版特殊怪整合。</li>
+              </ul>
+            </div>
+            <div class="mc-recess" style="padding:12px 14px;">
+              <strong style="color:var(--jade);">📦 預估正式 0.1.0 規模</strong>
+              <ul style="padding-left:20px;margin-top:6px;">
+                <li><strong>武器</strong>：1 把專屬妖刃（餓鬼道•真刀）＋ 14 把資料驅動神兵（完整連段與 8 幀序列粒子）。</li>
+                <li><strong>裝備飾品</strong>：11 件具備被動環境感應與第一人稱檢視動畫的神話裝備。</li>
+                <li><strong>生物與天象</strong>：5 種餓鬼怪物＋活體真刀實體、4 種花粉症原版特殊怪、2 位古神 Boss（WIP）與 2 種世界天象。</li>
+              </ul>
+            </div>
+            <div class="mc-recess" style="padding:12px 14px;">
+              <strong style="color:var(--epic-purple);">🚀 後續計畫</strong>
+              <ul style="padding-left:20px;margin-top:6px;">
+                <li>完成 Boss 模型與招式後補齊掉落物／合成表獨立頁面（<code>recipes.html</code>）。</li>
+                <li>將 <code>ComboSchool</code> 流派演化樹與 <code>Combo HUD</code> 納入 Wiki 互動模擬器。</li>
+                <li>正式 0.1.0 公開後同步切換正式版號並部署 GitHub Pages。</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="mc-panel" style="padding:18px;">
+          <div class="section-heading">2. 資料來源對齊表 (Source of Truth)</div>
+          <div class="table-wrap mc-recess">
+            <table>
+              <thead><tr><th>資料類別</th><th>模組原始碼路徑（<code>../mod_godsmadseason/</code>）</th></tr></thead>
+              <tbody>
+                <tr><td>模組版本與基本資訊</td><td><code>gradle.properties</code>、<code>src/main/resources/META-INF/mods.toml</code></td></tr>
+                <tr><td>繁體中文正式譯名與說明</td><td><code>src/main/resources/assets/godsmadseason/lang/zh_tw.json</code></td></tr>
+                <tr><td>武器與裝備註冊清單</td><td><code>src/main/java/tw/niwi7yming4/godsmadseason/weapon/WeaponItems.java</code></td></tr>
+                <tr><td>招式、傷害、攻速、終極技</td><td><code>src/main/resources/assets/godsmadseason/weapons/&lt;id&gt;/moveset.json</code></td></tr>
+                <tr><td>流派演化與 Combo HUD</td><td><code>weapon/combo/ComboSchool.java</code>、<code>textures/gui/combo/*.png</code></td></tr>
+                <tr><td>序列幀粒子貼圖</td><td><code>src/main/resources/assets/godsmadseason/textures/particle/*_0..7.png</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="mc-panel" style="padding:18px;">
+          <div class="section-heading">3. 美術與新增條目 SOP</div>
+          <div style="display:grid;gap:8px;font-size:0.9rem;color:var(--text-muted);">
+            <div>• <strong>圖示與動畫</strong>：新物品圖示放入 <code>wiki/assets/icons/</code>，8 幀粒子放入 <code>wiki/assets/vfx/</code>，精靈圖放入 <code>wiki/assets/sprites/</code>。</div>
+            <div>• <strong>結構擴充</strong>：新增頁面沿用 <code>.wiki-shell</code> + <code>#topbar</code> + <code>#sideTree</code> 骨架，並在 <code>js/wiki.js</code> 的 <code>NAV_ITEMS</code> 註冊。</div>
+            <div>• <strong>離線相容</strong>：嚴禁使用 <code>fetch()</code> 讀取本地 JSON 或絕對路徑，確保本機 <code>file://</code> 與 GitHub Pages 皆正常瀏覽。</div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="footer mc-panel" id="pageFooter"></footer>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/wiki.js"></script>
+</body>
+</html>

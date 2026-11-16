@@ -1,0 +1,1233 @@
+/* ==========================================================================
+   神的瘋狂時節 (Gods' Mad Season) — 開發快照百科圖鑑
+   美術風格：MC 1.20.1 像素石磚 × 神話動態圖鑑 UI (Full-Width)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=DotGothic16&family=Silkscreen:wght@400;700&display=swap');
+
+:root {
+  --bg-void: #0a0b10;
+  --bg-stone: #181b27;
+  --bg-stone-light: #232738;
+  --bg-slot: #0d0f17;
+  --bg-slot-hover: #1b2030;
+  --border-dark: #050608;
+  --border-bevel-hi: #48516e;
+  --border-bevel-lo: #0f111a;
+  --gold: #e6b84c;
+  --gold-bright: #ffe58f;
+  --gold-dim: #8c6b23;
+  --epic-purple: #a35cff;
+  --crimson: #e04f6d;
+  --jade: #48c9b0;
+  --text-main: #f3ede0;
+  --text-muted: #b0a99b;
+  --text-dim: #797368;
+  --font-pixel: "Silkscreen", "DotGothic16", "Cubic 11", monospace;
+  --font-ui: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+@keyframes floatMythic {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-7px) scale(1.04); }
+}
+
+@keyframes spinRune {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spinRuneReverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes shockwaveRing {
+  0% { transform: scale(0.35); opacity: 0.95; border-width: 4px; }
+  100% { transform: scale(1.9); opacity: 0; border-width: 1px; }
+}
+
+@keyframes hitShake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-4px, 2px); }
+  40% { transform: translate(4px, -2px); }
+  60% { transform: translate(-3px, -2px); }
+  80% { transform: translate(3px, 2px); }
+}
+
+#ambientCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.72;
+}
+
+.wiki-shell {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes pulseAura {
+  0%, 100% { opacity: 0.45; transform: scale(0.95); }
+  50% { opacity: 0.9; transform: scale(1.08); }
+}
+
+@keyframes glintSweep {
+  0% { transform: translateX(-140%) skewX(-22deg); }
+  45%, 100% { transform: translateX(220%) skewX(-22deg); }
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.45; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+
+body {
+  font-family: var(--font-ui);
+  color: var(--text-main);
+  /* 使用真實 MC 1.20.1 deepslate_tiles 像素平鋪底紋 + 深邃神話漸層 */
+  background-color: var(--bg-void);
+  background-image:
+    radial-gradient(circle at 12% 10%, rgba(163, 92, 255, 0.22), transparent 36%),
+    radial-gradient(circle at 88% 85%, rgba(230, 184, 76, 0.16), transparent 38%),
+    linear-gradient(rgba(10, 11, 16, 0.84), rgba(10, 11, 16, 0.88)),
+    url("../assets/mc/block_deepslate_tiles.png");
+  background-size: 100% 100%, 100% 100%, 100% 100%, 64px 64px;
+  image-rendering: pixelated;
+  min-height: 100vh;
+  line-height: 1.65;
+  padding: 12px 16px;
+}
+
+a { color: var(--gold); text-decoration: none; }
+a:hover { color: var(--gold-bright); text-decoration: underline; }
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--bg-slot);
+  border: 1px solid var(--border-bevel-hi);
+  padding: 2px 7px;
+  color: var(--gold-bright);
+}
+
+.mc-pixel {
+  image-rendering: pixelated;
+}
+
+.mc-panel {
+  background: var(--bg-stone);
+  border: 2px solid var(--border-dark);
+  box-shadow:
+    inset 2px 2px 0 var(--border-bevel-hi),
+    inset -2px -2px 0 var(--border-bevel-lo),
+    0 10px 26px rgba(0, 0, 0, 0.65);
+}
+
+.mc-panel-gold {
+  background:
+    linear-gradient(rgba(24, 27, 39, 0.92), rgba(20, 22, 33, 0.95)),
+    url("../assets/mc/block_gilded_blackstone.png");
+  background-size: 100% 100%, 64px 64px;
+  border: 2px solid var(--border-dark);
+  box-shadow:
+    inset 2px 2px 0 var(--gold-bright),
+    inset -2px -2px 0 var(--gold-dim),
+    0 0 28px rgba(230, 184, 76, 0.22);
+  position: relative;
+}
+
+.mc-recess {
+  background: var(--bg-slot);
+  border: 2px solid var(--border-dark);
+  box-shadow:
+    inset 2px 2px 0 #07080c,
+    inset -2px -2px 0 #2e3447;
+}
+
+/* ---------- 滿版外框 ---------- */
+.wiki-shell {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ---------- 頂部導覽列 ---------- */
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 20px;
+  background:
+    linear-gradient(180deg, rgba(33, 37, 56, 0.94) 0%, rgba(21, 24, 36, 0.96) 100%),
+    url("../assets/mc/block_chiseled_deepslate.png");
+  background-size: 100% 100%, 48px 48px;
+  border: 2px solid var(--border-dark);
+  box-shadow:
+    inset 2px 2px 0 var(--border-bevel-hi),
+    inset -2px -2px 0 var(--border-bevel-lo),
+    0 12px 30px rgba(0, 0, 0, 0.7);
+}
+
+.brand-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-emblem {
+  width: 54px;
+  height: 54px;
+  background: radial-gradient(circle, rgba(163, 92, 255, 0.45), var(--bg-slot));
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 18px rgba(230, 184, 76, 0.35), inset 0 0 12px rgba(163, 92, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.brand-emblem img {
+  width: 42px;
+  height: 42px;
+  image-rendering: pixelated;
+  animation: floatMythic 3.6s ease-in-out infinite;
+}
+
+.brand-text-main {
+  font-family: var(--font-pixel);
+  font-size: 1.38rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--gold-bright);
+  text-shadow: 2px 2px 0 #000, 0 0 16px rgba(230, 184, 76, 0.45);
+  line-height: 1.25;
+}
+
+.brand-text-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+}
+
+.ver-badge {
+  font-family: var(--font-pixel);
+  background: rgba(224, 79, 109, 0.2);
+  border: 1px solid var(--crimson);
+  color: #ffb3c2;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 1px 7px;
+}
+
+.top-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.tab-icon {
+  width: 18px;
+  height: 18px;
+  image-rendering: pixelated;
+}
+
+.stat-mc-icon {
+  width: 28px;
+  height: 28px;
+  image-rendering: pixelated;
+  margin-bottom: 4px;
+  animation: floatMythic 3.2s ease-in-out infinite;
+}
+
+.stat-inline-icon {
+  width: 16px;
+  height: 16px;
+  image-rendering: pixelated;
+  vertical-align: middle;
+}
+
+.burst-particle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 5;
+  transition: transform 0.55s cubic-bezier(0.12, 0.8, 0.25, 1), opacity 0.55s ease-out;
+}
+
+.portrait-corner-relic {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  image-rendering: pixelated;
+  opacity: 0.72;
+  pointer-events: none;
+  z-index: 2;
+  animation: floatMythic 4s ease-in-out infinite;
+}
+
+.portrait-corner-relic.tl { top: 8px; left: 8px; }
+.portrait-corner-relic.tr { top: 8px; right: 8px; animation-delay: 0.8s; }
+.portrait-corner-relic.bl { bottom: 8px; left: 8px; animation-delay: 1.5s; }
+.portrait-corner-relic.br { bottom: 8px; right: 8px; animation-delay: 2.1s; }
+
+.boss-portal-bg {
+  background:
+    linear-gradient(rgba(22, 16, 28, 0.88), rgba(16, 13, 22, 0.94)),
+    url("../assets/mc/block_sculk_shrieker_can_summon_inner_top.png");
+  background-size: 100% 100%, 64px 64px;
+}
+
+.phenom-portal-bg {
+  background:
+    linear-gradient(rgba(16, 22, 32, 0.86), rgba(12, 16, 24, 0.94)),
+    url("../assets/mc/block_respawn_anchor_top.png");
+  background-size: 100% 100%, 64px 64px;
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 15px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: linear-gradient(180deg, #2a2f44 0%, #1b1e2d 100%);
+  border: 2px solid var(--border-dark);
+  box-shadow: inset 2px 2px 0 #4a5373, inset -2px -2px 0 #10131d;
+  transition: transform 0.14s ease, color 0.14s ease;
+  text-decoration: none;
+  position: relative;
+}
+
+.tab-btn:hover { color: var(--text-main); transform: translateY(-2px); text-decoration: none; }
+
+.tab-btn.active {
+  color: var(--gold-bright);
+  background: linear-gradient(180deg, #42351b 0%, #261e0f 100%);
+  box-shadow:
+    inset 2px 2px 0 var(--gold-bright),
+    inset -2px -2px 0 var(--gold-dim),
+    0 0 18px rgba(230, 184, 76, 0.35);
+}
+
+.tab-btn.active::after {
+  content: "✦";
+  color: var(--gold-bright);
+  animation: starTwinkle 2s ease-in-out infinite;
+}
+
+.tab-count {
+  font-size: 0.74rem;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 1px 6px;
+  color: var(--text-muted);
+}
+
+.top-search {
+  display: flex;
+  align-items: center;
+  min-width: 260px;
+}
+
+.top-search input {
+  width: 100%;
+  background: var(--bg-slot);
+  border: 2px solid var(--border-dark);
+  box-shadow: inset 2px 2px 0 #07080c, inset -2px -2px 0 #343b52;
+  color: var(--text-main);
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.top-search input:focus {
+  box-shadow: inset 2px 2px 0 #07080c, inset -2px -2px 0 var(--gold);
+}
+
+.draft-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 18px;
+  background: linear-gradient(90deg, rgba(230, 184, 76, 0.16), rgba(163, 92, 255, 0.16), rgba(224, 79, 109, 0.14));
+  border: 2px solid var(--border-dark);
+  box-shadow: inset 2px 2px 0 var(--gold-dim), inset -2px -2px 0 #141620;
+  font-size: 0.88rem;
+}
+
+.soul-fire-icon {
+  width: 20px;
+  height: 20px;
+  image-rendering: pixelated;
+  vertical-align: middle;
+}
+
+/* ---------- 滿版雙欄工作區 ---------- */
+.workspace {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.side-tree {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+  position: sticky;
+  top: 12px;
+}
+
+.tree-group-title {
+  font-family: var(--font-pixel);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 11px;
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: var(--gold-bright);
+  background:
+    linear-gradient(180deg, rgba(45, 50, 71, 0.92), rgba(28, 31, 46, 0.96)),
+    url("../assets/mc/block_chiseled_deepslate.png");
+  background-size: 100% 100%, 32px 32px;
+  border: 2px solid var(--border-dark);
+  box-shadow: inset 2px 2px 0 #4b5370, inset -2px -2px 0 #10121b;
+}
+
+.tree-items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 5px;
+}
+
+.tree-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  background: var(--bg-slot);
+  border: 1px solid #252a3b;
+  transition: all 0.12s ease;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.tree-link:hover {
+  background: var(--bg-slot-hover);
+  color: var(--text-main);
+  border-color: var(--gold-dim);
+  text-decoration: none;
+}
+
+.tree-link.active {
+  color: var(--gold-bright);
+  background: rgba(230, 184, 76, 0.16);
+  border-color: var(--gold);
+  font-weight: 700;
+}
+
+.tree-mini-icon {
+  width: 18px;
+  height: 18px;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* ---------- 放大版快速挑選列 ---------- */
+.showcase-strip {
+  padding: 12px 14px;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  align-items: center;
+}
+
+.slot-tile {
+  width: 82px;
+  height: 82px;
+  flex-shrink: 0;
+  background: radial-gradient(circle, #252a3f 0%, #10121b 100%);
+  border: 2px solid var(--border-dark);
+  box-shadow: inset 2px 2px 0 #444c69, inset -2px -2px 0 #0c0e15;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.14s ease;
+  padding: 6px;
+}
+
+.slot-tile:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: inset 2px 2px 0 var(--gold), inset -2px -2px 0 var(--gold-dim);
+}
+
+.slot-tile.selected {
+  background: radial-gradient(circle, rgba(163, 92, 255, 0.38) 0%, #161426 100%);
+  box-shadow:
+    inset 2px 2px 0 var(--gold-bright),
+    inset -2px -2px 0 var(--gold-dim),
+    0 0 18px rgba(230, 184, 76, 0.4);
+}
+
+.slot-tile.selected::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 55%;
+  background: linear-gradient(90deg, transparent, rgba(255, 229, 143, 0.25), transparent);
+  animation: glintSweep 2.8s infinite;
+  pointer-events: none;
+}
+
+.slot-tile img {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.slot-tile-label {
+  position: absolute;
+  bottom: 3px;
+  right: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.85);
+  color: var(--gold-bright);
+  padding: 0 4px;
+  border: 1px solid rgba(230, 184, 76, 0.35);
+}
+
+/* ---------- 焦點檢視面板 ---------- */
+.inspector {
+  display: grid;
+  grid-template-columns: 330px 1fr;
+  gap: 18px;
+  padding: 18px;
+}
+
+.inspector-portrait {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: radial-gradient(circle at 50% 32%, rgba(163, 92, 255, 0.24), #0c0e15 76%);
+}
+
+.portrait-frame {
+  height: 230px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--border-dark);
+  background:
+    radial-gradient(circle, rgba(230, 184, 76, 0.16) 0%, rgba(10, 11, 18, 0.94) 74%),
+    url("../assets/mc/block_crying_obsidian.png");
+  background-size: 100% 100%, 48px 48px;
+  box-shadow: inset 0 0 32px rgba(163, 92, 255, 0.28);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s ease-out;
+  transform-style: preserve-3d;
+}
+
+.portrait-frame.hit-shake {
+  animation: hitShake 0.28s ease-out;
+}
+
+/* 雙重反轉神話法陣 */
+.portrait-frame::before {
+  content: "";
+  position: absolute;
+  width: 186px;
+  height: 186px;
+  border-radius: 50%;
+  border: 2px dashed rgba(230, 184, 76, 0.45);
+  box-shadow: 0 0 28px rgba(163, 92, 255, 0.3);
+  animation: spinRune 18s linear infinite;
+  pointer-events: none;
+}
+
+.portrait-frame::after {
+  content: "";
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 1px dotted rgba(163, 92, 255, 0.65);
+  background: radial-gradient(circle, rgba(163, 92, 255, 0.3), transparent 70%);
+  animation: spinRuneReverse 12s linear infinite;
+  pointer-events: none;
+}
+
+.shockwave-burst {
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 3px solid var(--gold-bright);
+  box-shadow: 0 0 20px var(--epic-purple);
+  pointer-events: none;
+  z-index: 3;
+  animation: shockwaveRing 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.combo-pill {
+  font-size: 0.78rem;
+  padding: 3px 8px;
+  background: var(--bg-slot);
+  border: 1px solid #2e3447;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.combo-pill:hover, .combo-pill.active-combo {
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+  background: rgba(230, 184, 76, 0.16);
+  transform: translateY(-1px);
+}
+
+.entry-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+  animation: cardReveal 0.38s ease backwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.portrait-frame img.portrait-main-icon {
+  width: 128px;
+  height: 128px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 12px rgba(230, 184, 76, 0.32));
+  animation: floatMythic 3.4s ease-in-out infinite;
+}
+
+.stat-rows { display: flex; flex-direction: column; gap: 7px; font-size: 0.92rem; }
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 11px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #2b3045;
+}
+
+.stat-row-k { color: var(--text-muted); }
+.stat-row-v { color: var(--gold-bright); font-weight: 700; }
+
+.inspector-info { display: flex; flex-direction: column; gap: 14px; }
+
+.inspector-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 2px solid #2c3246;
+  padding-bottom: 10px;
+}
+
+.inspector-title {
+  font-family: var(--font-pixel);
+  font-size: 1.62rem;
+  font-weight: 700;
+  color: var(--gold-bright);
+  text-shadow: 2px 2px 0 #000, 0 0 14px rgba(230, 184, 76, 0.3);
+}
+
+.inspector-id { font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-dim); }
+.inspector-desc { font-size: 0.98rem; color: var(--text-main); }
+
+.inspector-subgrid {
+  display: grid;
+  grid-template-columns: 1fr 270px;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.sub-box { padding: 12px 14px; }
+.sub-box-title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--gold-bright);
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* ---------- UI/UX 升級：RPG 技能槽與按鍵徽章 ---------- */
+.skill-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.skill-slot {
+  background: rgba(10, 12, 18, 0.78);
+  border: 1px solid #2b3145;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.skill-slot.ult-slot {
+  border-color: var(--gold-dim);
+  background: linear-gradient(135deg, rgba(230, 184, 76, 0.12), rgba(163, 92, 255, 0.1));
+}
+
+.skill-slot-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 0.74rem;
+  color: var(--text-dim);
+}
+
+.keycap {
+  font-family: var(--font-pixel);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  background: #23283a;
+  color: var(--gold-bright);
+  border: 1px solid #48516e;
+  box-shadow: inset 0 -1px 0 #090a0f;
+}
+
+.skill-slot-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* ---------- UI/UX 升級：五段連段時間軸 ---------- */
+.combo-timeline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.combo-node {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: var(--bg-slot);
+  border: 1px solid #323950;
+  color: var(--text-main);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.combo-node:hover, .combo-node.active-combo {
+  border-color: var(--gold-bright);
+  background: rgba(230, 184, 76, 0.18);
+  color: var(--gold-bright);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(230, 184, 76, 0.22);
+}
+
+.combo-step {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 800;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #252b3d;
+  color: var(--gold-bright);
+  border: 1px solid var(--gold-dim);
+}
+
+.combo-arrow {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+/* ---------- UI/UX 升級：動作按鈕、上下切換、Toast ---------- */
+.mc-btn {
+  font-family: var(--font-pixel);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--gold-bright);
+  background: linear-gradient(180deg, #2d3348 0%, #1c2030 100%);
+  border: 2px solid var(--border-dark);
+  box-shadow: inset 1px 1px 0 #4d5678, inset -1px -1px 0 #10121b;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.mc-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: inset 1px 1px 0 var(--gold), inset -1px -1px 0 var(--gold-dim);
+}
+
+.strip-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+}
+
+.strip-nav-btn {
+  width: 36px;
+  height: 82px;
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--gold-bright);
+  background: linear-gradient(180deg, #2a2f44 0%, #181b28 100%);
+  border: 2px solid var(--border-dark);
+  box-shadow: inset 1px 1px 0 #4a5373, inset -1px -1px 0 #0e1018;
+  cursor: pointer;
+}
+
+.strip-nav-btn:hover {
+  box-shadow: inset 1px 1px 0 var(--gold), inset -1px -1px 0 var(--gold-dim);
+}
+
+.toast-banner {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 16px;
+  background: #171424;
+  border: 2px solid var(--gold-bright);
+  color: var(--gold-bright);
+  font-size: 0.86rem;
+  font-weight: 700;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.75);
+  z-index: 99;
+  animation: cardReveal 0.2s ease;
+}
+
+/* ---------- 真實 MC 貼圖 3x3 合成台 ---------- */
+.crafting-wrap { display: flex; align-items: center; gap: 12px; }
+
+.craft-grid-3x3 {
+  display: grid;
+  grid-template-columns: repeat(3, 52px);
+  grid-template-rows: repeat(3, 52px);
+  gap: 3px;
+  background: #2b3042;
+  padding: 5px;
+  border: 2px solid var(--border-dark);
+}
+
+.craft-slot {
+  width: 52px;
+  height: 52px;
+  background: #141722;
+  border: 1px solid #090a0f;
+  box-shadow: inset 2px 2px 0 #07080c, inset -2px -2px 0 #383f57;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 4px;
+}
+
+.craft-slot.filled:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 108%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #12061f;
+  border: 2px solid var(--epic-purple);
+  color: var(--gold-bright);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  padding: 3px 7px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.craft-slot img, .craft-slot svg {
+  width: 38px;
+  height: 38px;
+  image-rendering: pixelated;
+}
+
+.craft-arrow { font-size: 1.6rem; color: var(--gold-bright); font-weight: 800; }
+
+.craft-result {
+  width: 64px;
+  height: 64px;
+  background: radial-gradient(circle, rgba(230, 184, 76, 0.3), #141722);
+  border: 2px solid var(--gold-bright);
+  box-shadow: 0 0 16px rgba(230, 184, 76, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.craft-result img { width: 46px; height: 46px; image-rendering: pixelated; }
+
+/* ---------- 序列幀粒子動畫播放器 ---------- */
+.vfx-player-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  background: radial-gradient(circle at 30% 50%, rgba(163, 92, 255, 0.16), #0b0c13);
+  border: 1px solid #353c54;
+}
+
+.vfx-stage {
+  width: 96px;
+  height: 96px;
+  flex-shrink: 0;
+  background: #06070b;
+  border: 2px solid var(--epic-purple);
+  box-shadow: inset 0 0 18px rgba(163, 92, 255, 0.35), 0 0 14px rgba(163, 92, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.vfx-stage img { width: 82px; height: 82px; object-fit: contain; image-rendering: pixelated; }
+
+.vfx-frame-badge {
+  position: absolute;
+  bottom: 2px;
+  right: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  background: rgba(0, 0, 0, 0.85);
+  color: #cfa8ff;
+  padding: 0 4px;
+}
+
+.vfx-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 12px;
+}
+
+.vfx-card { padding: 12px; display: flex; align-items: center; gap: 12px; }
+
+/* ---------- 篩選與卡片 ---------- */
+.filter-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 12px 14px; }
+
+.filter-btn {
+  padding: 6px 14px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--bg-slot);
+  border: 2px solid var(--border-dark);
+  box-shadow: inset 1px 1px 0 #343a4f, inset -1px -1px 0 #0a0b10;
+  cursor: pointer;
+}
+
+.filter-btn:hover { color: var(--text-main); }
+
+.filter-btn.active {
+  color: var(--gold-bright);
+  background: #332814;
+  box-shadow: inset 1px 1px 0 var(--gold-bright), inset -1px -1px 0 var(--gold-dim);
+}
+
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.tag { font-size: 0.76rem; font-weight: 700; padding: 2px 8px; border: 1px solid transparent; }
+.tag-gold { background: rgba(230, 184, 76, 0.16); border-color: var(--gold-dim); color: var(--gold-bright); }
+.tag-purple { background: rgba(163, 92, 255, 0.18); border-color: #6b38b3; color: #d5b5ff; }
+.tag-crimson { background: rgba(224, 79, 109, 0.18); border-color: #9e3249; color: #ff9eb2; }
+.tag-jade { background: rgba(72, 201, 176, 0.15); border-color: #2c8a78; color: #82ebd6; }
+.tag-wip { background: rgba(255, 193, 7, 0.14); border-color: #a37b00; color: #ffe075; }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.entry-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  cursor: pointer;
+  transition: transform 0.14s ease;
+}
+
+.entry-card:hover {
+  transform: translateY(-3px);
+  box-shadow: inset 2px 2px 0 var(--gold), inset -2px -2px 0 var(--gold-dim), 0 12px 26px rgba(0, 0, 0, 0.7);
+}
+
+.entry-card.selected-card {
+  box-shadow: inset 2px 2px 0 var(--gold-bright), inset -2px -2px 0 var(--gold-dim), 0 0 22px rgba(230, 184, 76, 0.28);
+}
+
+.entry-head { display: flex; align-items: center; gap: 14px; }
+
+.item-icon-box {
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, #282e44, #0f1119);
+  border: 2px solid var(--border-dark);
+  box-shadow: inset 1px 1px 0 #4d5678, inset -1px -1px 0 #08090d;
+}
+
+.item-icon { width: 42px; height: 42px; object-fit: contain; image-rendering: pixelated; }
+.entry-name { font-size: 1.08rem; font-weight: 800; color: var(--text-main); }
+.entry-id { font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-dim); }
+.entry-body { font-size: 0.88rem; color: var(--text-muted); }
+
+.combo-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+.combo-pill { font-size: 0.78rem; padding: 3px 8px; background: var(--bg-slot); border: 1px solid #2e3447; color: var(--text-muted); }
+
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.stat-card { padding: 16px; text-align: center; }
+.stat-value { font-family: var(--font-pixel); font-size: 1.95rem; font-weight: 700; color: var(--gold-bright); text-shadow: 2px 2px 0 #000, 0 0 12px rgba(230, 184, 76, 0.3); }
+.stat-label { font-size: 0.84rem; color: var(--text-muted); margin-top: 3px; }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid #262a3a; }
+th { background: #222636; color: var(--gold-bright); font-weight: 700; font-size: 0.84rem; }
+
+.section-heading { font-family: var(--font-pixel); font-size: 1.15rem; font-weight: 700; color: var(--gold-bright); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.section-heading::before { content: "◆"; color: var(--gold); }
+
+.footer { padding: 14px 20px; font-size: 0.8rem; color: var(--text-dim); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+
+/* ---------- 怪物精靈圖與 Boss 典故框 ---------- */
+.entity-sprite-box {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  background: radial-gradient(circle, rgba(163, 92, 255, 0.18), #0c0e15);
+  border: 2px solid var(--border-dark);
+  box-shadow: inset 1px 1px 0 #48516e, inset -1px -1px 0 #090a0f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.entity-sprite-img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  animation: floatMythic 3s ease-in-out infinite;
+}
+
+.lore-box {
+  padding: 9px 12px;
+  background: rgba(10, 11, 18, 0.72);
+  border-left: 3px solid var(--gold);
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+/* ---------- 網頁桌寵吉祥物 (Desktop Pet Mascots) ---------- */
+@keyframes petWalkBob {
+  0%, 100% { transform: translateY(0px) scale(1, 1); }
+  45% { transform: translateY(-7px) scale(0.96, 1.05); }
+  85% { transform: translateY(1px) scale(1.04, 0.96); }
+}
+
+@keyframes petIdleBreathe {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.03, 0.96); }
+}
+
+@keyframes petHappyJump {
+  0% { transform: translateY(0) scale(1); }
+  35% { transform: translateY(-28px) scale(1.1) rotate(-8deg); }
+  65% { transform: translateY(-18px) scale(1.08) rotate(8deg); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.pet-mascot {
+  position: fixed;
+  bottom: 12px;
+  left: 0;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: auto;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.pet-mascot.dragging {
+  cursor: grabbing;
+  z-index: 95;
+  transform: scale(1.08);
+}
+
+.pet-bubble {
+  font-family: var(--font-pixel);
+  max-width: 240px;
+  padding: 7px 11px;
+  margin-bottom: 6px;
+  background: #141022;
+  border: 2px solid var(--gold-bright);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.8), inset 0 0 8px rgba(163, 92, 255, 0.25);
+  color: var(--text-main);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  text-align: center;
+  position: relative;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.pet-bubble.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.pet-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--gold-bright);
+}
+
+.pet-sprite {
+  width: 92px;
+  height: 92px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.88));
+  animation: petIdleBreathe 2.2s ease-in-out infinite;
+}
+
+.pet-mascot.walking .pet-sprite {
+  animation: petWalkBob 0.48s ease-in-out infinite;
+}
+
+.pet-mascot.happy .pet-sprite {
+  animation: petHappyJump 0.55s ease-out;
+}
+
+.topbar-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-tree-toggle {
+  display: none;
+}
+
+/* ---------- 平板與手機響應式適配 (Tablet <= 1024px, Mobile <= 768px) ---------- */
+@media (max-width: 1024px) {
+  body { padding: 10px; }
+  .workspace { grid-template-columns: 220px 1fr; gap: 10px; }
+  .inspector { grid-template-columns: 260px 1fr; gap: 12px; padding: 14px; }
+  .inspector-subgrid { grid-template-columns: 1fr; }
+  .top-search { min-width: 180px; }
+}
+
+@media (max-width: 768px) {
+  body { padding: 8px; }
+  .topbar { padding: 10px 12px; gap: 10px; }
+  .top-search { width: 100%; min-width: 0; }
+  .top-tabs { width: 100%; }
+  .tab-btn { flex: 1 1 auto; justify-content: center; padding: 7px 10px; font-size: 0.82rem; }
+  .mobile-tree-toggle { display: inline-flex; }
+  .workspace { grid-template-columns: 1fr; }
+  .side-tree { display: none; position: static; max-height: 320px; }
+  .side-tree.mobile-open { display: flex; }
+  .inspector { grid-template-columns: 1fr; }
+  .portrait-frame { height: 180px; }
+  .portrait-frame img.portrait-main-icon { width: 104px; height: 104px; }
+  .skill-grid { grid-template-columns: 1fr; }
+  .card-grid { grid-template-columns: 1fr; }
+  .pet-sprite { width: 66px; height: 66px; }
+  .pet-bubble { max-width: 155px; font-size: 0.7rem; }
+}

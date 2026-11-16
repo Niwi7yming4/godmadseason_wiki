@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AGENTS.md 開發規範 — 神的瘋狂時節 Wiki</title>
-  <link rel="stylesheet" href="css/wiki.css">
+  <link rel="stylesheet" href="css/wiki.css?v=20261117">
 </head>
 <body data-page="agents">
   <div class="wiki-shell">
@@ -79,7 +79,7 @@
           <div class="section-heading">3. 美術與新增條目 SOP</div>
           <div style="display:grid;gap:8px;font-size:0.9rem;color:var(--text-muted);">
             <div>• <strong>圖示與動畫</strong>：新物品圖示放入 <code>wiki/assets/icons/</code>，8 幀粒子放入 <code>wiki/assets/vfx/</code>，精靈圖放入 <code>wiki/assets/sprites/</code>。</div>
-            <div>• <strong>結構擴充</strong>：新增頁面沿用 <code>.wiki-shell</code> + <code>#topbar</code> + <code>#sideTree</code> 骨架，並在 <code>js/wiki.js</code> 的 <code>NAV_ITEMS</code> 註冊。</div>
+            <div>• <strong>結構擴充</strong>：新增頁面沿用 <code>.wiki-shell</code> + <code>#topbar</code> + <code>#sideTree</code> 骨架，並在 <code>js/wiki.js?v=20261117</code> 的 <code>NAV_ITEMS</code> 註冊。</div>
             <div>• <strong>離線相容</strong>：嚴禁使用 <code>fetch()</code> 讀取本地 JSON 或絕對路徑，確保本機 <code>file://</code> 與 GitHub Pages 皆正常瀏覽。</div>
           </div>
         </section>
@@ -89,7 +89,7 @@
     <footer class="footer mc-panel" id="pageFooter"></footer>
   </div>
 
-  <script src="js/data.js"></script>
-  <script src="js/wiki.js"></script>
+  <script src="js/data.js?v=20261117"></script>
+  <script src="js/wiki.js?v=20261117"></script>
 </body>
 </html>

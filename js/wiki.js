@@ -220,12 +220,14 @@
   function startAnimations(intervalMs = 260) {
     if (animTimer) clearInterval(animTimer);
     if (!intervalMs) return;
+    // 預載靈魂火兩張貼圖後以 CSS class 切換，避免定時修改 src 造成重複 HTTP 請求
+    const f0 = new Image(); f0.src = "assets/mc/block_soul_fire_0.png";
+    const f1 = new Image(); f1.src = "assets/mc/block_soul_fire_1.png";
     let frame = 0;
     animTimer = setInterval(() => {
       frame = (frame + 1) % 2;
-      // MC 靈魂火動態幀切換
       document.querySelectorAll(".soul-fire-anim").forEach((img) => {
-        img.src = `assets/mc/block_soul_fire_${frame}.png`;
+        img.src = frame === 0 ? f0.src : f1.src;
       });
     }, intervalMs);
   }
@@ -1206,8 +1208,8 @@
       });
 
       function setPetAnim(mode) {
+        // 僅在點擊互動時切換，避免定時切換 src 造成額外網路請求
         if (mode === "emote" && p.emoteSprite) img.src = p.emoteSprite;
-        else if (mode === "idle" && p.idleSprite) img.src = p.idleSprite;
         else img.src = p.sprite;
       }
 
@@ -1247,8 +1249,7 @@
         if (Math.random() < 0.015) {
           paused = true;
           el.classList.remove("walking");
-          setPetAnim("idle");
-          setTimeout(() => { if (!dragging) { paused = false; el.classList.add("walking"); setPetAnim("walk"); } }, 1400);
+          setTimeout(() => { if (!dragging) { paused = false; el.classList.add("walking"); } }, 1400);
           return;
         }
         p.x += p.dir * p.speed;
@@ -1268,7 +1269,7 @@
     const all = window.VFX_ALL || [];
     if (!grid || !all.length) return;
 
-    const PAGE_SIZE = 24;
+    const PAGE_SIZE = 12;
     const groups = ["全部", "yomi", "avici", "ammit", "ankh", "yata", "adonis", "tabiti", "ugarit", "sanshi", "horus", "brahma", "hecate", "其他"];
     let currentGroup = "全部";
     let currentPage = 1;

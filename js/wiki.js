@@ -1264,13 +1264,24 @@
   function renderVfxGallery() {
     const grid = document.getElementById("vfxAllGrid");
     const filterBar = document.getElementById("vfxFilters");
-    const speedBar = document.getElementById("vfxSpeedBar");
     const searchInput = document.getElementById("globalSearch");
     const all = window.VFX_ALL || [];
     if (!grid || !all.length) return;
 
+    const PAGE_SIZE = 24;
     const groups = ["全部", "yomi", "avici", "ammit", "ankh", "yata", "adonis", "tabiti", "ugarit", "sanshi", "horus", "brahma", "hecate", "其他"];
     let currentGroup = "全部";
+    let currentPage = 1;
+
+    // 分頁控制列（避免一次載入 209 張 GIF 觸發 GitHub Pages 流量限制）
+    let pager = document.getElementById("vfxPager");
+    if (!pager) {
+      pager = document.createElement("div");
+      pager.id = "vfxPager";
+      pager.className = "filter-bar mc-panel";
+      pager.style.justifyContent = "space-between";
+      grid.parentNode.insertBefore(pager, grid.nextSibling);
+    }
 
     if (filterBar) {
       filterBar.innerHTML = groups.map((g) =>
@@ -1280,17 +1291,11 @@
         const btn = e.target.closest(".filter-btn");
         if (!btn) return;
         currentGroup = btn.dataset.group;
+        currentPage = 1;
         filterBar.querySelectorAll(".filter-btn").forEach((b) => b.classList.toggle("active", b === btn));
         update();
       });
     }
-
-    speedBar?.addEventListener("click", (e) => {
-      const btn = e.target.closest("[data-vfx-speed]");
-      if (!btn) return;
-      speedBar.querySelectorAll(".filter-btn").forEach((b) => b.classList.toggle("active", b === btn));
-      startAnimations(Number(btn.dataset.vfxSpeed));
-    });
 
     function update() {
       const q = (searchInput?.value || "").trim().toLowerCase();
@@ -1301,10 +1306,15 @@
         return matchGroup && (!q || name.toLowerCase().includes(q));
       });
 
-      grid.innerHTML = list.map((prefix) => `
+      const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+      if (currentPage > totalPages) currentPage = totalPages;
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const pageItems = list.slice(start, start + PAGE_SIZE);
+
+      grid.innerHTML = pageItems.map((prefix) => `
         <div class="vfx-card mc-recess">
           <div class="vfx-stage">
-            <img src="assets/vfx_gif/${esc(prefix)}.gif" alt="${esc(prefix)}">
+            <img src="assets/vfx_gif/${esc(prefix)}.gif" alt="${esc(prefix)}" loading="lazy">
             <span class="vfx-frame-badge">GIF</span>
           </div>
           <div style="min-width:0;">
@@ -1313,9 +1323,23 @@
           </div>
         </div>
       `).join("");
+
+      pager.innerHTML = `
+        <div style="font-size:0.84rem;color:var(--text-muted);">共 ${list.length} 組 · 目前顯示第 ${currentPage} / ${totalPages} 頁（每頁 ${PAGE_SIZE} 組）</div>
+        <div style="display:flex;gap:8px;">
+          <button class="mc-btn" id="vfxPrevBtn" ${currentPage <= 1 ? "disabled style='opacity:0.45;cursor:not-allowed;'" : ""}>◀ 上一頁</button>
+          <button class="mc-btn" id="vfxNextBtn" ${currentPage >= totalPages ? "disabled style='opacity:0.45;cursor:not-allowed;'" : ""}>下一頁 ▶</button>
+        </div>
+      `;
+      pager.querySelector("#vfxPrevBtn")?.addEventListener("click", () => {
+        if (currentPage > 1) { currentPage--; update(); grid.scrollIntoView({ behavior: "smooth", block: "start" }); }
+      });
+      pager.querySelector("#vfxNextBtn")?.addEventListener("click", () => {
+        if (currentPage < totalPages) { currentPage++; update(); grid.scrollIntoView({ behavior: "smooth", block: "start" }); }
+      });
     }
 
-    searchInput?.addEventListener("input", update);
+    searchInput?.addEventListener("input", () => { currentPage = 1; update(); });
     update();
   }
 

@@ -217,24 +217,15 @@
   }
 
   let animTimer = null;
-  function startAnimations(intervalMs = 110) {
+  function startAnimations(intervalMs = 260) {
     if (animTimer) clearInterval(animTimer);
     if (!intervalMs) return;
     let frame = 0;
     animTimer = setInterval(() => {
-      frame = (frame + 1) % 8;
-      // 8 幀粒子序列動畫
-      document.querySelectorAll("[data-vfx-prefix]").forEach((el) => {
-        const prefix = el.dataset.vfxPrefix;
-        const img = el.querySelector("img");
-        const badge = el.querySelector(".vfx-frame-badge");
-        if (img) img.src = `assets/vfx/${prefix}_${frame}.png`;
-        if (badge) badge.textContent = `F${frame + 1}/8`;
-      });
+      frame = (frame + 1) % 2;
       // MC 靈魂火動態幀切換
-      const fireFrame = frame % 2;
       document.querySelectorAll(".soul-fire-anim").forEach((img) => {
-        img.src = `assets/mc/block_soul_fire_${fireFrame}.png`;
+        img.src = `assets/mc/block_soul_fire_${frame}.png`;
       });
     }, intervalMs);
   }
@@ -397,14 +388,14 @@
     if (vfxGrid && DATA.vfxSequences) {
       vfxGrid.innerHTML = DATA.vfxSequences.map((v) => `
         <div class="vfx-card mc-recess">
-          <div class="vfx-stage" data-vfx-prefix="${esc(v.prefix)}">
-            <img src="assets/vfx/${esc(v.prefix)}_0.png" alt="${esc(v.name)}">
-            <span class="vfx-frame-badge">F1/8</span>
+          <div class="vfx-stage">
+            <img src="assets/vfx_gif/${esc(v.prefix)}.gif" alt="${esc(v.name)}">
+            <span class="vfx-frame-badge">GIF</span>
           </div>
           <div>
             <div style="font-weight:700;color:var(--gold-bright);font-size:0.95rem;">${esc(v.name)}</div>
             <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">${esc(v.owner)}</div>
-            <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-dim);margin-top:4px;">${esc(v.prefix)}_0..7</div>
+            <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-dim);margin-top:4px;">${esc(v.prefix)}.gif</div>
           </div>
         </div>
       `).join("");
@@ -518,13 +509,13 @@
           <div class="sub-box mc-recess">
             <div class="sub-box-title">實機序列幀特效 (${esc(vfxMatch.name)})</div>
             <div class="vfx-player-box">
-              <div class="vfx-stage" data-vfx-prefix="${esc(vfxMatch.prefix)}">
-                <img src="assets/vfx/${esc(vfxMatch.prefix)}_0.png" alt="${esc(vfxMatch.name)}">
-                <span class="vfx-frame-badge">F1/8</span>
+              <div class="vfx-stage">
+                <img src="assets/vfx_gif/${esc(vfxMatch.prefix)}.gif" alt="${esc(vfxMatch.name)}">
+                <span class="vfx-frame-badge">GIF</span>
               </div>
               <div style="font-size:0.8rem;color:var(--text-muted);">
-                <div>真實 8 幀粒子貼圖</div>
-                <div style="margin-top:4px;"><code>${esc(vfxMatch.prefix)}_0..7</code></div>
+                <div>實機粒子動態預覽</div>
+                <div style="margin-top:4px;"><code>${esc(vfxMatch.prefix)}.gif</code></div>
               </div>
             </div>
           </div>
@@ -729,13 +720,13 @@
         <div class="sub-box mc-recess">
           <div class="sub-box-title">實機序列幀特效 (${esc(vfxMatch.name)})</div>
           <div class="vfx-player-box">
-            <div class="vfx-stage" data-vfx-prefix="${esc(vfxMatch.prefix)}">
-              <img src="assets/vfx/${esc(vfxMatch.prefix)}_0.png" alt="${esc(vfxMatch.name)}">
-              <span class="vfx-frame-badge">F1/8</span>
+            <div class="vfx-stage">
+              <img src="assets/vfx_gif/${esc(vfxMatch.prefix)}.gif" alt="${esc(vfxMatch.name)}">
+              <span class="vfx-frame-badge">GIF</span>
             </div>
             <div style="font-size:0.82rem;color:var(--text-muted);">
-              <div>真實 8 幀粒子貼圖</div>
-              <div style="margin-top:4px;"><code>${esc(vfxMatch.prefix)}_0..7</code></div>
+              <div>實機粒子動態預覽</div>
+              <div style="margin-top:4px;"><code>${esc(vfxMatch.prefix)}.gif</code></div>
             </div>
           </div>
         </div>
@@ -1312,13 +1303,13 @@
 
       grid.innerHTML = list.map((prefix) => `
         <div class="vfx-card mc-recess">
-          <div class="vfx-stage" data-vfx-prefix="${esc(prefix)}">
-            <img src="assets/vfx/${esc(prefix)}_0.png" alt="${esc(prefix)}">
-            <span class="vfx-frame-badge">F1/8</span>
+          <div class="vfx-stage">
+            <img src="assets/vfx_gif/${esc(prefix)}.gif" alt="${esc(prefix)}">
+            <span class="vfx-frame-badge">GIF</span>
           </div>
           <div style="min-width:0;">
             <div style="font-weight:700;color:var(--gold-bright);font-size:0.86rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(prefix)}</div>
-            <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-dim);margin-top:4px;">${esc(prefix)}_0..7</div>
+            <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-dim);margin-top:4px;">${esc(prefix)}.gif</div>
           </div>
         </div>
       `).join("");

@@ -73,7 +73,7 @@ wiki/
 │   └── wiki.js            # 共用導覽列、左側檢索樹、序列幀播放器、WebAudio 音樂與桌寵系統
 └── assets/
     ├── icons/             # 從模組 textures/item/ 同步的 PNG 圖示
-    ├── vfx/               # 從模組 textures/particle/ 同步的 1,647+ 張 8 幀序列動畫貼圖
+    ├── vfx_gif/           # 由序列幀合成的 209 組循環粒子動畫 GIF（避免直接外流原始拆幀）
     ├── sprites/           # 吉祥物與花粉症精靈圖，以及 gif/ 餓鬼道循環動畫 GIF
     └── mc/                # 從 Minecraft 1.20.1 原版貼圖包擷取的石磚、合成與靈魂火貼圖
 ```
